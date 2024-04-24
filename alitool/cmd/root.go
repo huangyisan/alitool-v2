@@ -7,9 +7,8 @@ import (
 	"alitool-v2/alitool/cmd/create"
 	"alitool-v2/alitool/cmd/list"
 	"alitool-v2/alitool/cmd/update"
-	"fmt"
+	"alitool-v2/internal/common"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 	"os"
 )
 
@@ -40,6 +39,7 @@ func Execute() {
 }
 
 func init() {
+	common.NewConfig()
 	cobra.OnFinalize(initConfig)
 	rootCmd.AddCommand(list.ListCmd)
 	rootCmd.AddCommand(create.CreateCmd)
@@ -56,24 +56,5 @@ func init() {
 }
 
 func initConfig() {
-	if cfgFile != "" {
-		// Use config file from the flag.
-		viper.SetConfigFile(cfgFile)
-	} else {
-		// Find home directory.
-		home, err := os.UserHomeDir()
-		cobra.CheckErr(err)
 
-		// Search config in home directory with name ".alitool" (without extension).
-		viper.AddConfigPath(home)
-		viper.SetConfigType("yaml")
-		viper.SetConfigName(".alitool")
-	}
-
-	viper.AutomaticEnv()
-	viper.SetEnvPrefix("ALITOOL")
-
-	if err := viper.ReadInConfig(); err != nil {
-		fmt.Println("Using config file:", viper.ConfigFileUsed())
-	}
 }
