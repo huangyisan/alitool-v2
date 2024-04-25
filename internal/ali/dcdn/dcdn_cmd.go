@@ -15,6 +15,7 @@ func ListALLDomainsInfo() {
 func ListDomainInfoByAccountName(accountName string) {
 	ats := account.GetAccountMap()
 	at := ats[accountName]
+	fmt.Printf("Account Name: %s\n", at.AccountName)
 	client := NewDCDNClient("cn-shanghai", at.AccessKeyId, at.AccessKeySecret)
 	domainsInfo, err := listDCDNDomainsResponse(client)
 
@@ -31,4 +32,5 @@ func ListDomainInfoByAccountName(accountName string) {
 			}
 		}
 	}
+	fmt.Printf("\n")
 }
