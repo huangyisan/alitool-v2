@@ -7,6 +7,7 @@ import (
 	"alitool-v2/alitool/cmd/create"
 	"alitool-v2/alitool/cmd/list"
 	"alitool-v2/alitool/cmd/update"
+	"alitool-v2/internal/ali/account"
 	"alitool-v2/internal/common"
 	"github.com/spf13/cobra"
 	"os"
@@ -40,7 +41,7 @@ func Execute() {
 
 func init() {
 	common.NewConfig()
-	cobra.OnFinalize(initConfig)
+	cobra.OnInitialize(initConfig)
 	rootCmd.AddCommand(list.ListCmd)
 	rootCmd.AddCommand(create.CreateCmd)
 	rootCmd.AddCommand(update.UpdateCmd)
@@ -56,5 +57,6 @@ func init() {
 }
 
 func initConfig() {
+	account.InitAccountMap()
 
 }

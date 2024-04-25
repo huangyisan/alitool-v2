@@ -2,21 +2,18 @@ package dcdn
 
 import (
 	"alitool-v2/internal/ali/account"
-	"alitool-v2/internal/common"
 	"fmt"
 )
 
 func ListALLDomainsInfo() {
-	ats := account.GetAccountMap(common.Config)
-	fmt.Println("ListALLDomainsInfo")
+	ats := account.GetAccountMap()
 	for _, at := range ats {
-		//fmt.Printf("%#v", at)
 		ListDomainInfoByAccountName(at.AccountName)
 	}
 }
 
 func ListDomainInfoByAccountName(accountName string) {
-	ats := account.GetAccountMap(common.Config)
+	ats := account.GetAccountMap()
 	at := ats[accountName]
 	client := NewDCDNClient("cn-shanghai", at.AccessKeyId, at.AccessKeySecret)
 	domainsInfo, err := listDCDNDomainsResponse(client)
@@ -26,7 +23,11 @@ func ListDomainInfoByAccountName(accountName string) {
 	} else {
 		for _, v := range domainsInfo {
 			for _, y := range v.Domains.PageData {
-				fmt.Printf("%#v\n", y)
+				tmpSource := make([]string, 0)
+				for _, source := range y.Sources.Source {
+					tmpSource = append(tmpSource, fmt.Sprintf("%s:%d", source.Content, source.Port))
+				}
+				fmt.Printf("%v, %v\n", y.DomainName, tmpSource)
 			}
 		}
 	}

@@ -1,6 +1,7 @@
 package account
 
 import (
+	"alitool-v2/internal/common"
 	"fmt"
 	"github.com/spf13/viper"
 )
@@ -33,29 +34,26 @@ func NewAliAccount(name, accessKey, secretKey, subAccountName string) *AliAccoun
 }
 
 func NewAccountMap(config *viper.Viper) {
-
-}
-
-func GetAccountMap(config *viper.Viper) map[string]*AliAccount {
 	err := config.Unmarshal(&accounts)
+
 	if err != nil {
 		fmt.Println(err)
 	}
 	accountMap = make(map[string]*AliAccount)
 	for _, account := range accounts.AliAccount {
-		accountMap[account.AccountName] = &account
+		acc := account
+		accountMap[account.AccountName] = &acc
 	}
-	return accountMap
 }
 
-//func GetAccessKeyId(accountName string) string {
-//	return AccountMap[accountName].AccessKeyId
-//}
+func GetAccountMap() map[string]*AliAccount {
+	return accountMap
+}
 
 func GetAccessKeySecret(account *AliAccount) string {
 	return account.AccessKeySecret
 }
 
-//func init() {
-//	NewAccountMap(common.Config)
-//}
+func InitAccountMap() {
+	NewAccountMap(common.Config)
+}
