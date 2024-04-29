@@ -9,10 +9,15 @@ var (
 	accountName string
 	allDomains  bool
 	regionId    string
+	expire      bool
 )
 
 func dcdnAction() func(cmd *cobra.Command, args []string) {
 	return func(cmd *cobra.Command, args []string) {
+		if expire {
+			dcdn.ListDcdnSSLCertificatesWithIn30Days()
+			return
+		}
 		if allDomains && accountName == "" {
 			dcdn.ListALLDomainsInfo()
 			return
@@ -21,6 +26,7 @@ func dcdnAction() func(cmd *cobra.Command, args []string) {
 			dcdn.ListDomainInfoByAccountName(accountName)
 			return
 		}
+
 	}
 }
 
@@ -37,6 +43,7 @@ func init() {
 	// Here you will define your flags and configuration settings.
 	DcdnCmd.Flags().StringVarP(&accountName, "account", "a", "", "specified account name")
 	DcdnCmd.Flags().BoolVarP(&allDomains, "all-domains", "A", false, "check all domains")
+	DcdnCmd.Flags().BoolVarP(&expire, "ssl-expire", "E", false, "list expire within 30 days certificate")
 	DcdnCmd.Flags().StringVarP(&regionId, "region", "z", "cn-shanghai", "specific account region")
 
 	// Cobra supports Persistent Flags which will work for this command

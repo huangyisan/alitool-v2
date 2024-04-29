@@ -5,6 +5,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"os"
+	"strings"
 )
 
 var Config *viper.Viper
@@ -30,4 +31,13 @@ func NewConfig() {
 
 func GetConfig() *viper.Viper {
 	return Config
+}
+
+// DomainSuffix will return domain suffix, such as www.baidu.com will return baidu.com
+func DomainSuffix(domainName string) string {
+	dn := strings.Split(domainName, ".")
+	if len(dn) == 1 {
+		return strings.Join(dn, "")
+	}
+	return strings.Join(dn[len(dn)-2:], ".")
 }

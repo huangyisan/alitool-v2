@@ -27,7 +27,7 @@ func getDCDNDomainInfo(client *dcdn.Client, domainName string) (dcdn.DescribeDcd
 	return *response, nil
 }
 
-func listDCDNDomainsResponse(client *dcdn.Client) ([]*dcdn.DescribeDcdnUserDomainsResponse, error) {
+func listDCDNDomains(client *dcdn.Client) ([]*dcdn.DescribeDcdnUserDomainsResponse, error) {
 	var pageStartNumber = 1
 	var totalCount int64
 	var pageSize = 20
@@ -54,4 +54,21 @@ func listDCDNDomainsResponse(client *dcdn.Client) ([]*dcdn.DescribeDcdnUserDomai
 		pageStartNumber += 1
 	}
 	return response, nil
+}
+
+func getDCDNSSLCertificateList(client *dcdn.Client) (*dcdn.DescribeDcdnHttpsDomainListResponse, error) {
+	//var pageStartNumber = 1
+	//var totalCount int64
+	//var pageSize = 20
+	//nextFlag := true
+	//response := make([]*dcdn.DescribeDcdnCertificateListResponse, 0)
+	//dcdn.DescribeDcdnUsercer
+	request := dcdn.CreateDescribeDcdnHttpsDomainListRequest()
+	request.Scheme = "https"
+
+	res, err := client.DescribeDcdnHttpsDomainList(request)
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
 }

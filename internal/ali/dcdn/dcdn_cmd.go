@@ -3,6 +3,7 @@ package dcdn
 import (
 	"alitool-v2/internal/ali/account"
 	"fmt"
+	"github.com/spf13/cobra"
 )
 
 func ListALLDomainsInfo() {
@@ -17,7 +18,7 @@ func ListDomainInfoByAccountName(accountName string) {
 	at := ats[accountName]
 	fmt.Printf("Account Name: %s\n", at.AccountName)
 	client := NewDCDNClient("cn-shanghai", at.AccessKeyId, at.AccessKeySecret)
-	domainsInfo, err := listDCDNDomainsResponse(client)
+	domainsInfo, err := listDCDNDomains(client)
 
 	if err != nil {
 		fmt.Println(err)
@@ -33,4 +34,24 @@ func ListDomainInfoByAccountName(accountName string) {
 		}
 	}
 	fmt.Printf("\n")
+}
+
+func ListDcdnSSLCertificatesWithIn30Days() {
+	ats := account.GetAccountMap()
+	for _, at := range ats {
+		fmt.Printf("Account Name: %s\n", at.AccountName)
+		client := NewDCDNClient("cn-shanghai", at.AccessKeyId, at.AccessKeySecret)
+		res, err := getDCDNSSLCertificateList(client)
+		if err != nil {
+			cobra.CompError(err.Error())
+
+		} else {
+			for _, v := range res.CertInfos.CertInfo {
+				if v.CertStatus == "expire_soon" {
+					fmt.Printf("\t%s, %s\n", v.DomainName, v.CertExpireTime)
+				}
+			}
+		}
+
+	}
 }

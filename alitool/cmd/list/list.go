@@ -6,6 +6,7 @@ package list
 import (
 	"alitool-v2/alitool/cmd/list/account"
 	"alitool-v2/alitool/cmd/list/dcdn"
+	"alitool-v2/alitool/cmd/list/domain"
 	"fmt"
 
 	"github.com/spf13/cobra"
@@ -29,6 +30,7 @@ to quickly create a Cobra application.`,
 func init() {
 	ListCmd.AddCommand(account.AccountCmd)
 	ListCmd.AddCommand(dcdn.DcdnCmd)
+	ListCmd.AddCommand(domain.DomainCmd)
 
 	// Here you will define your flags and configuration settings.
 
