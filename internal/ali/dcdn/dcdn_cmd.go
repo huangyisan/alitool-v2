@@ -46,12 +46,25 @@ func ListDcdnSSLCertificatesWithIn30Days() {
 			cobra.CompError(err.Error())
 
 		} else {
-			for _, v := range res.CertInfos.CertInfo {
-				if v.CertStatus == "expire_soon" {
-					fmt.Printf("\t%s, %s\n", v.DomainName, v.CertExpireTime)
+			for _, v := range res {
+				for _, y := range v.CertInfos.CertInfo {
+					if y.CertStatus == "expire_soon" {
+						fmt.Printf("\t%s, %s\n", y.DomainName, y.CertExpireTime)
+					}
 				}
 			}
 		}
+	}
+}
 
+func UpdateDcdnSSLCertificate(accountName, domainName, certName string) {
+	ats := account.GetAccountMap()
+	at := ats[accountName]
+	client := NewDCDNClient("cn-shanghai", at.AccessKeyId, at.AccessKeySecret)
+	res, err := updateDcdnSSLCertificate(client, domainName, certName)
+	if err != nil {
+		cobra.CompError(err.Error())
+	} else {
+		fmt.Printf("%#v\n", res.BaseResponse.GetHttpStatus())
 	}
 }

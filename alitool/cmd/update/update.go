@@ -4,8 +4,8 @@ Copyright © 2024 NAME HERE <EMAIL ADDRESS>
 package update
 
 import (
+	"alitool-v2/alitool/cmd/update/dcdn"
 	"fmt"
-
 	"github.com/spf13/cobra"
 )
 
@@ -25,6 +25,7 @@ to quickly create a Cobra application.`,
 }
 
 func init() {
+	UpdateCmd.AddCommand(dcdn.DcdnCmd)
 
 	// Here you will define your flags and configuration settings.
 

@@ -37,14 +37,14 @@ func listDCDNDomains(client *dcdn.Client) ([]*dcdn.DescribeDcdnUserDomainsRespon
 
 	request := dcdn.CreateDescribeDcdnUserDomainsRequest()
 	request.Scheme = "https"
-	request.PageSize = "100"
+	request.PageSize = requests.NewInteger(pageSize)
 	request.DomainStatus = "online"
 
 	for nextFlag {
 		request.PageNumber = requests.NewInteger(pageStartNumber)
 		res, err := client.DescribeDcdnUserDomains(request)
 		if err != nil {
-			return response, err
+			return nil, err
 		}
 		totalCount = res.TotalCount
 		response = append(response, res)
@@ -56,19 +56,40 @@ func listDCDNDomains(client *dcdn.Client) ([]*dcdn.DescribeDcdnUserDomainsRespon
 	return response, nil
 }
 
-func getDCDNSSLCertificateList(client *dcdn.Client) (*dcdn.DescribeDcdnHttpsDomainListResponse, error) {
-	//var pageStartNumber = 1
-	//var totalCount int64
-	//var pageSize = 20
-	//nextFlag := true
-	//response := make([]*dcdn.DescribeDcdnCertificateListResponse, 0)
-	//dcdn.DescribeDcdnUsercer
+func getDCDNSSLCertificateList(client *dcdn.Client) ([]*dcdn.DescribeDcdnHttpsDomainListResponse, error) {
+	var pageStartNumber = 1
+	var totalCount int
+	var pageSize = 20
+	nextFlag := true
+	response := make([]*dcdn.DescribeDcdnHttpsDomainListResponse, 0)
+
 	request := dcdn.CreateDescribeDcdnHttpsDomainListRequest()
 	request.Scheme = "https"
+	request.PageSize = requests.NewInteger(pageSize)
+	for nextFlag {
+		request.PageNumber = requests.NewInteger(pageStartNumber)
+		res, err := client.DescribeDcdnHttpsDomainList(request)
+		if err != nil {
+			return nil, err
+		}
+		totalCount = res.TotalCount
+		response = append(response, res)
+		if pageStartNumber*pageSize >= totalCount {
+			nextFlag = false
+		}
+		pageStartNumber += 1
+	}
+	return response, nil
+}
 
-	res, err := client.DescribeDcdnHttpsDomainList(request)
+func updateDcdnSSLCertificate(client *dcdn.Client, domainNames, certName string) (*dcdn.SetDcdnDomainCertificateResponse, error) {
+	request := dcdn.CreateSetDcdnDomainCertificateRequest()
+	request.DomainName = domainNames
+	request.QueryParams["CertName"] = certName
+	request.QueryParams["SSLProtocol"] = "on"
+	response, err := client.SetDcdnDomainCertificate(request)
 	if err != nil {
 		return nil, err
 	}
-	return res, nil
+	return response, nil
 }
