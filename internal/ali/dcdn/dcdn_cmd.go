@@ -68,3 +68,10 @@ func UpdateDcdnSSLCertificate(accountName, domainName, certName string) {
 		fmt.Printf("%#v\n", res.BaseResponse.GetHttpStatus())
 	}
 }
+
+func UpdateDcdnSSLCertificateMultipleDomains(accountName, certName string, domainNames []string) {
+	for _, v := range domainNames {
+		fmt.Printf("update %s ssl ...\n", v)
+		UpdateDcdnSSLCertificate(accountName, v, certName)
+	}
+}

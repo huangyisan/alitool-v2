@@ -2,19 +2,44 @@ package dcdn
 
 import (
 	"alitool-v2/internal/ali/dcdn"
+	"fmt"
 	"github.com/spf13/cobra"
+	"strings"
 )
+
+type multiDomainNames []string
+
+func (d *multiDomainNames) String() string {
+	return strings.Join(*d, " ")
+}
+
+func (d *multiDomainNames) Set(value string) error {
+	fmt.Println("multiDomainNames:", value)
+	//v := strings.ReplaceAll(value, " ", "")
+	*d = append(*d, strings.Split(value, ",")...)
+	return nil
+}
+
+func (d *multiDomainNames) Type() string {
+	return "multiDomainNames"
+}
 
 var (
 	accountName string
 	certName    string
 	domainName  string
+	domainNames multiDomainNames
 )
 
 func dcdnAction() func(cmd *cobra.Command, args []string) {
 	return func(cmd *cobra.Command, args []string) {
-		if accountName != "" && certName != "" {
+		if accountName != "" && certName != "" && domainName != "" && domainNames == nil {
 			dcdn.UpdateDcdnSSLCertificate(accountName, domainName, certName)
+			return
+		}
+		if accountName != "" && certName != "" && domainNames != nil && domainName == "" {
+			fmt.Println(domainNames)
+			dcdn.UpdateDcdnSSLCertificateMultipleDomains(accountName, certName, domainNames)
 			return
 		}
 		cmd.Help()
@@ -35,6 +60,7 @@ func init() {
 	DcdnCmd.Flags().StringVarP(&accountName, "account", "a", "", "specified account name")
 	DcdnCmd.Flags().StringVarP(&certName, "certName", "i", "", "certificate id")
 	DcdnCmd.Flags().StringVarP(&domainName, "domainName", "d", "", "domain name")
+	DcdnCmd.Flags().VarP(&domainNames, "domainNames", "n", "domain names")
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
